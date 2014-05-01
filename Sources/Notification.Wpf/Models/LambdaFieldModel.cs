@@ -9,6 +9,7 @@ namespace Notification.Wpf.Models
 {
     public class LambdaFieldModel : LambdaFieldBase, IDisplayText
     {
+        public const string Name = "Lambda Field";
         private readonly Field<string> _displayText;
         public string DisplayTextProperty { get { return _displayText.PropertyName; } }
         public string DisplayText
@@ -46,7 +47,7 @@ namespace Notification.Wpf.Models
             _status = new Field<bool>(() => Status);
             _count = new Field<int>(() => Count);
             PropertyChanged += OnPropertyChanged;
-            _displayText.Value = "Setter Model : " + id;
+            _displayText.Value = String.Format("{0} Model : {1}", Name, id);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)

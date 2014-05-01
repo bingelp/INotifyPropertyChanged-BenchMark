@@ -17,17 +17,49 @@ namespace Notification.Wpf.ViewModels
     public class TestBenchViewModel : INotifyPropertyChanged
     {
         private const int ExecutionCount = 1000000;
+        private const int ResetResults = 1;
+        private const int ResetModels = 2;
+        private const int UpdateStatus = 3;
+        private const int AddResult = 4;
 
         public TestBenchViewModel()
         {
-            RunCommand = new RelayCommand(Run);
+            _worker = new BackgroundWorker();
+            _worker.DoWork += (s, e) => { Run(); };
+            _worker.RunWorkerCompleted += (s,e) => { Status = "Done";};
+            _worker.WorkerReportsProgress = true;
+            _worker.ProgressChanged += _worker_ProgressChanged;
+            RunCommand = new RelayCommand(_worker.RunWorkerAsync);
         }
+
+        void _worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            if (e.ProgressPercentage == ResetResults)
+            {
+                Results.Clear();
+            }
+            else if (e.ProgressPercentage == ResetModels)
+            {
+                Models = null;
+            }
+            else if (e.ProgressPercentage == UpdateStatus)
+            {
+                Status = e.UserState.ToString();
+            }
+            else if (e.ProgressPercentage == AddResult)
+            {
+                Results.Add((TestResult)e.UserState);
+            }
+        }
+
 
         public const string StatusProperty = "Status";
         public const string ObjectCountProperty = "ObjectCount";
         public const string ModelsProperty = "Models";
         public const string ResultsProperty = "Results";
         public const string RunCommandProperty = "RunCommand";
+
+        private BackgroundWorker _worker;
 
         private string _status = "Press the run button to run tests";
 
@@ -91,31 +123,30 @@ namespace Notification.Wpf.ViewModels
 
         public void Run()
         {
-            Results.Clear();
-            RunTest("Simple Implementation", SimpleModel.Create);
-            Thread.Sleep(1000);
-            RunTest("Setter Implementation", SetterModel.Create);
-            Thread.Sleep(1000);
-            RunTest("Lambda Implementation", LambdaModel.Create);
-            Thread.Sleep(1000);
-            RunTest("Field Implementation", FieldModel.Create);
-            Thread.Sleep(1000);
-            RunTest("Lambda Field Implementation", LambdaFieldModel.Create);
-            Thread.Sleep(1000);
-            RunTest("Field 2 Implementation", Field2Model.Create);
-            Thread.Sleep(1000);
-            RunTest("Field With Weak Event Handler Implementation", Field2Model.Create);
-            Thread.Sleep(1000);
-            RunTest("Delegate Setter Implementation", DelegateSetterModel.Create);
-
-            Models = null;
+                _worker.ReportProgress(ResetResults);
+                RunTest(SimpleModel.Name, SimpleModel.Create);
+                Thread.Sleep(1000);
+                RunTest(SetterModel.Name, SetterModel.Create);
+                Thread.Sleep(1000);
+                RunTest(LambdaModel.Name, LambdaModel.Create);
+                Thread.Sleep(1000);
+                RunTest(FieldModel.Name, FieldModel.Create);
+                Thread.Sleep(1000);
+                RunTest(LambdaFieldModel.Name, LambdaFieldModel.Create);
+                Thread.Sleep(1000);
+                RunTest(Field2Model.Name, Field2Model.Create);
+                Thread.Sleep(1000);
+                RunTest(FieldWeakEventModel.Name, FieldWeakEventModel.Create);
+                Thread.Sleep(1000);
+                RunTest(DelegateSetterModel.Name, DelegateSetterModel.Create);
+                _worker.ReportProgress(ResetModels);
         }
 
         private void RunTest(string description, Func<int, IDisplayText> factory)
         {
             for (int i = 1; i <= ObjectCount; i *= 10)
             {
-                Results.Add(RunTest(description, factory, i));
+                _worker.ReportProgress(AddResult,RunTest(description, factory, i));
             }
         }
 
@@ -124,7 +155,7 @@ namespace Notification.Wpf.ViewModels
             var watch = new Stopwatch();
             var result = new TestResult();
             result.Method = description;
-            Status = "Running Test on " + description + " ...";
+            _worker.ReportProgress(UpdateStatus,"Running Test on " + description + " Implementation ...");
 
             result.ObjectCount = objectCount;
             result.IterationCount = ExecutionCount / objectCount;
@@ -138,8 +169,7 @@ namespace Notification.Wpf.ViewModels
             UpdateValue(models, result.ObjectCount, result.IterationCount);
             watch.Stop();
             result.ExecutionMilliseconds = watch.ElapsedMilliseconds;
-
-            Status = "Done";
+            _worker.ReportProgress(UpdateStatus, "Done");
 
             return result;
         }
@@ -175,7 +205,6 @@ namespace Notification.Wpf.ViewModels
         {
             if (PropertyChanged != null)
             {
-                //Dispatcher.CurrentDispatcher.Invoke(() => PropertyChanged(this, new PropertyChangedEventArgs(propertyName)));
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }

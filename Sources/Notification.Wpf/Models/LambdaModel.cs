@@ -9,6 +9,7 @@ namespace Notification.Wpf.Models
 {
     public class LambdaModel : LambdaBase, IDisplayText
     {
+        public const string Name = "Lambda";
         public const string TimeProperty = "Time";
         public const string StatusProperty = "Status";
         public const string CountProperty = "Count";
@@ -43,7 +44,7 @@ namespace Notification.Wpf.Models
         public LambdaModel(int id)
         {
             PropertyChanged += OnPropertyChanged;
-            _displayText = "Lambda Model : " + id;
+            _displayText = String.Format("{0} Model : {1}", Name, id);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)

@@ -9,6 +9,7 @@ namespace Notification.Wpf.Models
 {
     public class FieldWeakEventModel : FieldBase, IDisplayText
     {
+        public const string Name = "Field With Weak Event Handler";
         public const string TimeProperty = "Time";
         public const string StatusProperty = "Status";
         public const string CountProperty = "Count";
@@ -43,7 +44,7 @@ namespace Notification.Wpf.Models
         public FieldWeakEventModel(int id)
         {
             PropertyChangedEventManager.AddHandler(this, OnPropertyChanged, StatusProperty);
-            _displayText.Value = "Setter Model : " + id;
+            _displayText.Value = String.Format("{0} Model : {1}", Name, id);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)

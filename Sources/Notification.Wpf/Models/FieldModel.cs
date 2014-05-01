@@ -9,6 +9,7 @@ namespace Notification.Wpf.Models
 {
     public class FieldModel : FieldBase, IDisplayText
     {
+        public const string Name = "Field";
         public const string TimeProperty = "Time";
         public const string StatusProperty = "Status";
         public const string CountProperty = "Count";
@@ -43,7 +44,7 @@ namespace Notification.Wpf.Models
         public FieldModel(int id)
         {
             PropertyChanged += OnPropertyChanged;
-            _displayText.Value = "Setter Model : " + id;
+            _displayText.Value = String.Format("{0} Model : {1}", Name, id);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)

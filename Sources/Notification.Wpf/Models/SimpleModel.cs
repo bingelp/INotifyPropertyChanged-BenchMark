@@ -9,6 +9,7 @@ namespace Notification.Wpf.Models
 {
     public class SimpleModel : SimpleBase, IDisplayText
     {
+        public const string Name = "Simple";
         public const string TimeProperty = "Time";
         public const string StatusProperty = "Status";
         public const string CountProperty = "Count";
@@ -53,7 +54,7 @@ namespace Notification.Wpf.Models
         public SimpleModel(int id)
         {
             PropertyChanged += OnPropertyChanged;
-            _displayText = "Simple Model : " + id;
+            _displayText = String.Format("{0} Model : {1}", Name, id);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
