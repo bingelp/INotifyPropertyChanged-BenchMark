@@ -139,6 +139,8 @@ namespace Notification.Wpf.ViewModels
                 RunTest(FieldWeakEventModel.Name, FieldWeakEventModel.Create);
                 Thread.Sleep(1000);
                 RunTest(DelegateSetterModel.Name, DelegateSetterModel.Create);
+                Thread.Sleep(1000);
+                RunTest(CMNModel.Name, CMNModel.Create);
                 _worker.ReportProgress(ResetModels);
         }
 
