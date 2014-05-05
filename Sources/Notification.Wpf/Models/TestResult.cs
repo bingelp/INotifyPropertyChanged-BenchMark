@@ -11,7 +11,7 @@ namespace Notification.Wpf.Models
         public string Method { get; set; }
         public int ObjectCount { get; set; }
         public int IterationCount { get; set; }
-        public long ConstructionMilliseconds { get; set; }
-        public long ExecutionMilliseconds { get; set; }
+        public double ConstructionMilliseconds { get; set; }
+        public double ExecutionMilliseconds { get; set; }
     }
 }

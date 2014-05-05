@@ -22,14 +22,36 @@ namespace Notification.Wpf.ViewModels
         private const int UpdateStatus = 3;
         private const int AddResult = 4;
 
+        private const int SleepTime = 500;
+
         public TestBenchViewModel()
         {
             _worker = new BackgroundWorker();
-            _worker.DoWork += (s, e) => { Run(); };
-            _worker.RunWorkerCompleted += (s,e) => { Status = "Done";};
+            _worker.DoWork += (s, e) => { ShowResults = false; Run(); };
+            _worker.RunWorkerCompleted += (s,e) =>
+            {
+                RaisePropertyChanged(ResultsWithCount1Property);
+                RaisePropertyChanged(ResultsWithCount10Property);
+                RaisePropertyChanged(ResultsWithCount100Property);
+                RaisePropertyChanged(ResultsWithCount1000Property);
+                RaisePropertyChanged(ResultsWithCount10000Property);
+                RaisePropertyChanged(ResultsWithCount100000Property);
+                RaisePropertyChanged(ResultsUsingCMNProperty);
+                RaisePropertyChanged(ResultsUsingDelegateSetterProperty);
+                RaisePropertyChanged(ResultsUsingField2Property);
+                RaisePropertyChanged(ResultsUsingFieldProperty);
+                RaisePropertyChanged(ResultsUsingFieldWeakEventProperty);
+                RaisePropertyChanged(ResultsUsingLambdaFieldProperty);
+                RaisePropertyChanged(ResultsUsingLambdaProperty);
+                RaisePropertyChanged(ResultsUsingSetterProperty);
+                RaisePropertyChanged(ResultsUsingSimpleProperty);
+                Status = "Done";
+                ShowResults = true;
+            };
             _worker.WorkerReportsProgress = true;
             _worker.ProgressChanged += _worker_ProgressChanged;
-            RunCommand = new RelayCommand(_worker.RunWorkerAsync);
+            RunCommand = new RelayCommand(_worker.RunWorkerAsync, (s) => {return !_worker.IsBusy;});
+            ShowResults = false;
         }
 
         void _worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -57,6 +79,24 @@ namespace Notification.Wpf.ViewModels
         public const string ObjectCountProperty = "ObjectCount";
         public const string ModelsProperty = "Models";
         public const string ResultsProperty = "Results";
+        public const string ResultsWithCount1Property = "ResultsWithCount1";
+        public const string ResultsWithCount10Property = "ResultsWithCount10";
+        public const string ResultsWithCount100Property = "ResultsWithCount100";
+        public const string ResultsWithCount1000Property = "ResultsWithCount1000";
+        public const string ResultsWithCount10000Property = "ResultsWithCount10000";
+        public const string ResultsWithCount100000Property = "ResultsWithCount100000";
+
+        public const string ResultsUsingCMNProperty = "ResultsUsingCMN";
+        public const string ResultsUsingDelegateSetterProperty = "ResultsUsingDelegateSetter";
+        public const string ResultsUsingField2Property = "ResultsUsingField2";
+        public const string ResultsUsingFieldProperty = "ResultsUsingField";
+        public const string ResultsUsingFieldWeakEventProperty = "ResultsUsingFieldWeakEvent";
+        public const string ResultsUsingLambdaFieldProperty = "ResultsUsingLambdaField";
+        public const string ResultsUsingLambdaProperty = "ResultsUsingLambda";
+        public const string ResultsUsingSetterProperty = "ResultsUsingSetter";
+        public const string ResultsUsingSimpleProperty = "ResultsUsingSimple";
+        public const string ShowResultsProperty = "ShowResults";
+
         public const string RunCommandProperty = "RunCommand";
 
         private BackgroundWorker _worker;
@@ -121,25 +161,101 @@ namespace Notification.Wpf.ViewModels
             }
         }
 
+        public IEnumerable<TestResult> ResultsWithCount1
+        {
+            get { return Results.Where(r => r.ObjectCount == 1); }
+        }
+
+        public IEnumerable<TestResult> ResultsWithCount10
+        {
+            get { return Results.Where(r => r.ObjectCount == 10); }
+        }
+
+        public IEnumerable<TestResult> ResultsWithCount100
+        {
+            get { return Results.Where(r => r.ObjectCount == 100); }
+        }
+
+        public IEnumerable<TestResult> ResultsWithCount1000
+        {
+            get { return Results.Where(r => r.ObjectCount == 1000); }
+        }
+
+        public IEnumerable<TestResult> ResultsWithCount10000
+        {
+            get { return Results.Where(r => r.ObjectCount == 10000); }
+        }
+
+        public IEnumerable<TestResult> ResultsWithCount100000
+        {
+            get { return Results.Where(r => r.ObjectCount == 100000); }
+        }
+
+        public IEnumerable<TestResult> ResultsUsingCMN
+        {
+            get { return Results.Where(r => r.Method == CMNModel.Name); }
+        }
+        public IEnumerable<TestResult> ResultsUsingDelegateSetter
+        {
+            get { return Results.Where(r => r.Method == DelegateSetterModel.Name); }
+        }
+        public IEnumerable<TestResult> ResultsUsingField2
+        {
+            get { return Results.Where(r => r.Method == Field2Model.Name); }
+        }
+        public IEnumerable<TestResult> ResultsUsingField
+        {
+            get { return Results.Where(r => r.Method == FieldModel.Name); }
+        }
+        public IEnumerable<TestResult> ResultsUsingFieldWeakEvent
+        {
+            get { return Results.Where(r => r.Method == FieldWeakEventModel.Name); }
+        }
+        public IEnumerable<TestResult> ResultsUsingLambdaField
+        {
+            get { return Results.Where(r => r.Method == LambdaFieldModel.Name); }
+        }
+        public IEnumerable<TestResult> ResultsUsingLambda
+        {
+            get { return Results.Where(r => r.Method == LambdaModel.Name); }
+        }
+        public IEnumerable<TestResult> ResultsUsingSetter
+        {
+            get { return Results.Where(r => r.Method == SetterModel.Name); }
+        }
+        public IEnumerable<TestResult> ResultsUsingSimple
+        {
+            get { return Results.Where(r => r.Method == SimpleModel.Name); }
+        }
+
+        private bool _showResults;
+
+        public bool ShowResults
+        {
+            get { return _showResults; }
+            set { _showResults = value; RaisePropertyChanged(ShowResultsProperty); }
+        }
+
+
         public void Run()
         {
                 _worker.ReportProgress(ResetResults);
                 RunTest(SimpleModel.Name, SimpleModel.Create);
-                Thread.Sleep(1000);
+                Thread.Sleep(SleepTime);
                 RunTest(SetterModel.Name, SetterModel.Create);
-                Thread.Sleep(1000);
+                Thread.Sleep(SleepTime);
                 RunTest(LambdaModel.Name, LambdaModel.Create);
-                Thread.Sleep(1000);
+                Thread.Sleep(SleepTime);
                 RunTest(FieldModel.Name, FieldModel.Create);
-                Thread.Sleep(1000);
+                Thread.Sleep(SleepTime);
                 RunTest(LambdaFieldModel.Name, LambdaFieldModel.Create);
-                Thread.Sleep(1000);
+                Thread.Sleep(SleepTime);
                 RunTest(Field2Model.Name, Field2Model.Create);
-                Thread.Sleep(1000);
+                Thread.Sleep(SleepTime);
                 RunTest(FieldWeakEventModel.Name, FieldWeakEventModel.Create);
-                Thread.Sleep(1000);
+                Thread.Sleep(SleepTime);
                 RunTest(DelegateSetterModel.Name, DelegateSetterModel.Create);
-                Thread.Sleep(1000);
+                Thread.Sleep(SleepTime);
                 RunTest(CMNModel.Name, CMNModel.Create);
                 _worker.ReportProgress(ResetModels);
         }
@@ -213,26 +329,69 @@ namespace Notification.Wpf.ViewModels
         #endregion
 
         #region RunCommand
+        /// <summary>
+        /// A command whose sole purpose is to 
+        /// relay its functionality to other
+        /// objects by invoking delegates. The
+        /// default return value for the CanExecute
+        /// method is 'true'.
+        /// </summary>
         public class RelayCommand : ICommand
         {
-            private readonly Action _fn;
+            #region Fields
 
-            public RelayCommand(Action fn)
+            readonly Action<object> _execute;
+            readonly Predicate<object> _canExecute;
+
+            #endregion // Fields
+
+            #region Constructors
+
+            /// <summary>
+            /// Creates a new command that can always execute.
+            /// </summary>
+            /// <param name="execute">The execution logic.</param>
+            public RelayCommand(Action<object> execute)
+                : this(execute, null)
             {
-                _fn = fn;
             }
 
+            /// <summary>
+            /// Creates a new command.
+            /// </summary>
+            /// <param name="execute">The execution logic.</param>
+            /// <param name="canExecute">The execution status logic.</param>
+            public RelayCommand(Action<object> execute, Predicate<object> canExecute)
+            {
+                if (execute == null)
+                    throw new ArgumentNullException("execute");
+
+                _execute = execute;
+                _canExecute = canExecute;
+            }
+
+            #endregion // Constructors
+
+            #region ICommand Members
+
+            [DebuggerStepThrough]
             public bool CanExecute(object parameter)
             {
-                return true;
+                return _canExecute == null ? true : _canExecute(parameter);
             }
 
-            public event EventHandler CanExecuteChanged;
+            public event EventHandler CanExecuteChanged
+            {
+                add { CommandManager.RequerySuggested += value; }
+                remove { CommandManager.RequerySuggested -= value; }
+            }
 
             public void Execute(object parameter)
             {
-                _fn();
+                _execute(parameter);
             }
+
+            #endregion // ICommand Members
         }
 
         private ICommand _runCommand;
