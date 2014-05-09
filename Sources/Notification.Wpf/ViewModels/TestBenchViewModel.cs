@@ -45,6 +45,7 @@ namespace Notification.Wpf.ViewModels
                 RaisePropertyChanged(ResultsUsingLambdaProperty);
                 RaisePropertyChanged(ResultsUsingSetterProperty);
                 RaisePropertyChanged(ResultsUsingSimpleProperty);
+                RaisePropertyChanged(ResultsUsingFodyProperty);
                 Status = "Done";
                 ShowResults = true;
             };
@@ -95,6 +96,7 @@ namespace Notification.Wpf.ViewModels
         public const string ResultsUsingLambdaProperty = "ResultsUsingLambda";
         public const string ResultsUsingSetterProperty = "ResultsUsingSetter";
         public const string ResultsUsingSimpleProperty = "ResultsUsingSimple";
+        public const string ResultsUsingFodyProperty = "ResultsUsingFody";
         public const string ShowResultsProperty = "ShowResults";
 
         public const string RunCommandProperty = "RunCommand";
@@ -227,6 +229,10 @@ namespace Notification.Wpf.ViewModels
         {
             get { return Results.Where(r => r.Method == SimpleModel.Name); }
         }
+        public IEnumerable<TestResult> ResultsUsingFody
+        {
+            get { return Results.Where(r => r.Method == FodyModel.Name); }
+        }
 
         private bool _showResults;
 
@@ -257,6 +263,8 @@ namespace Notification.Wpf.ViewModels
                 RunTest(DelegateSetterModel.Name, DelegateSetterModel.Create);
                 Thread.Sleep(SleepTime);
                 RunTest(CMNModel.Name, CMNModel.Create);
+                Thread.Sleep(SleepTime);
+                RunTest(FodyModel.Name, FodyModel.Create);
                 _worker.ReportProgress(ResetModels);
         }
 

@@ -171,6 +171,7 @@
                 <chartingToolkit:ColumnSeries DependentValuePath="ExecutionMilliseconds" IndependentValuePath="ObjectCount" ItemsSource="{Binding ResultsUsingField2}" Title="Field2" />
                 <chartingToolkit:ColumnSeries DependentValuePath="ExecutionMilliseconds" IndependentValuePath="ObjectCount" ItemsSource="{Binding ResultsUsingField}" Title="Field" />
                 <chartingToolkit:ColumnSeries DependentValuePath="ExecutionMilliseconds" IndependentValuePath="ObjectCount" ItemsSource="{Binding ResultsUsingFieldWeakEvent}" Title="FieldWeakEvent" />
+                <chartingToolkit:ColumnSeries DependentValuePath="ExecutionMilliseconds" IndependentValuePath="ObjectCount" ItemsSource="{Binding ResultsUsingFody}" Title="Fody" />
                 <chartingToolkit:ColumnSeries DependentValuePath="ExecutionMilliseconds" IndependentValuePath="ObjectCount" ItemsSource="{Binding ResultsUsingLambdaField}" Title="LambdaField" />
                 <chartingToolkit:ColumnSeries DependentValuePath="ExecutionMilliseconds" IndependentValuePath="ObjectCount" ItemsSource="{Binding ResultsUsingLambda}" Title="Lambda" />
                 <chartingToolkit:ColumnSeries DependentValuePath="ExecutionMilliseconds" IndependentValuePath="ObjectCount" ItemsSource="{Binding ResultsUsingSetter}" Title="Setter" />
